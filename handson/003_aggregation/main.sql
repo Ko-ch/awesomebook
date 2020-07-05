@@ -1,4 +1,4 @@
--- 01
+-- 003_01
 select
     hotel_id,
     count(reserve_id) as rsv_cnt,
@@ -8,7 +8,7 @@ from
 group by
     hotel_id
 
--- 02
+-- 003_02
 select
     hotel_id,
     people_num,
@@ -19,7 +19,7 @@ group by
     hotel_id,
     people_num
 
--- 03 注意：下記コードはBig Queryで実行できていない
+-- 003_03 注意：下記コードはBig Queryで実行できていない
 select
     hotel_id,
     MAX(total_price) as price_max,
@@ -32,7 +32,7 @@ from
 group by
     hotel_id
 
--- 04
+-- 003_04
 select
     hotel_id,
     coalesce(variance(total_price), 0) as price_var,
@@ -42,7 +42,7 @@ from
 group by
     hotel_id
 
--- 05
+-- 003_05
 -- Big Query仕様に変更しました。どうもorder by 句内にはcount()は使用できない模様。
 select
     round(total_price, -3) as total_price_round,
@@ -56,10 +56,19 @@ order by
 limit
     1
 
---06
+--003_06_1
 select
     *,
     row_number()
         over(partition by customer_id order by reserve_datetime) as log_no
 from
     awesomebook.reserve
+
+--003_06_2
+select
+    hotel_id,
+    rank() over (order by count(*) desc) as rsv_cnt_rank
+from
+    awesomebook.reserve
+group by
+    hotel_id
